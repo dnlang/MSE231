@@ -14,6 +14,7 @@ timefmt = '%H:%M'
 
 # create the output data file
 f = open('nofilter_tweets_24h.tsv', 'w')
+f.write('DATE\tTIME\tTIMEZONE\n')
 
 # function to round the time to a specific interval [5]
 def roundTime(dt=None, roundTo=60):
@@ -30,11 +31,8 @@ def roundTime(dt=None, roundTo=60):
 
 # read in the tweets using stdin [1] to parse
 for line in sys.stdin:
-    #print(line.rstrip()) # ignore a blank line [2]
-
     # load the JSON line [3]
-    parsed_json = json.loads(line.rstrip())
-    #print(parsed_json)
+    parsed_json = json.loads(line.rstrip()) # ignore a blank line [2]
 
     # parse the entries based on spec from Twitter API [4]
     try:
