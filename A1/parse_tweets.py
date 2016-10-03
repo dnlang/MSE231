@@ -13,7 +13,7 @@ datefmt = '%Y-%m-%d'
 timefmt = '%H:%M'
 
 # create the output data file
-f = open('nofilter_tweets_24h.tsv', 'w')
+f = open('snl_tweets.tsv', 'w')
 f.write('DATE\tTIME\tTIMEZONE\n')
 
 # function to round the time to a specific interval [5]

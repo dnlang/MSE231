@@ -6,7 +6,7 @@ options(stringsAsFactors = FALSE) # treat strings as strings not factors
 theme_set(theme_bw()) # set to a white ggplot theme
 
 # Read in the data
-nofilter_tweets_24h <- read.delim("~/GitRepos/MSE231/A1/nofilter_tweets_24h.tsv")
+nofilter_tweets_24h <- read.delim("~/GitRepos/MSE231/A1/snl_tweets.tsv")
 
 # Take a look at the top of the file to check it
 head(nofilter_tweets_24h)
@@ -28,7 +28,7 @@ p = ggplot(binned_tweets, aes(x=DATETIME, y=tweet_vol, group=TIMEZONE)) +
   geom_point(aes(colour=TIMEZONE)) +
   geom_line(aes(colour=TIMEZONE)) + # factor by timezone
   theme(legend.justification = c(1, 1), legend.position = c(1, 1)) + # legend in topright [3]
-  xlab("Time") + ylab("Tweet Volume")
+  xlab("Time") + ylab("Tweet Volume") + ggtitle("Tweet Volume: 'SNL'")
 print(p) # show the plot [4]
 
 
