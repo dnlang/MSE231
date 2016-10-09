@@ -12,9 +12,7 @@ pacific = timezone('US/Pacific')
 datefmt = '%Y-%m-%d'
 timefmt = '%H:%M'
 
-# create the output data file
-f = open('snl_tweets.tsv', 'w')
-f.write('DATE\tTIME\tTIMEZONE\n')
+print('DATE\tTIME\tTIMEZONE\n')
 
 # function to round the time to a specific interval [5]
 def roundTime(dt=None, roundTo=60):
@@ -57,21 +55,19 @@ for line in sys.stdin:
             # convert to Pacific Time [6]
             pac_dt = dt.astimezone(pacific)
 
-            # create csv with [date  time   time_zone]
+            # create tsv with [date  time   time_zone]
             tweet_time = pac_dt.date().strftime(datefmt) + '\t' \
             + pac_dt.time().strftime(timefmt) + '\t' \
             + timezone + '\n'
 
             # write the data to a tsv file
-            f.write(tweet_time)
+            print(tweet_time)
 
     except KeyError:
         # ignore entries that don't have a created_at date, mostly "deleted" entries
         pass
 
-# close the file when done processing
-f.close()
-print('Tweets Processed in %.02f seconds!' % (time.time() - start))
+#print('Tweets Processed in %.02f seconds!' % (time.time() - start))
 
 ####### REFERENCES #######
 # [1] https://en.wikibooks.org/wiki/Python_Programming/Input_and_Output#Standard_File_Objects
