@@ -1,3 +1,12 @@
+"""
+parse_tweets.py
+
+MSE 231 - Assignment 1
+David Lang
+Nikolas Martelaro
+Tres Pittman
+"""
+
 from datetime import datetime, timedelta, time
 import json
 from pytz import timezone
@@ -66,8 +75,6 @@ for line in sys.stdin:
     except KeyError:
         # ignore entries that don't have a created_at date, mostly "deleted" entries
         pass
-
-#print('Tweets Processed in %.02f seconds!' % (time.time() - start))
 
 ####### REFERENCES #######
 # [1] https://en.wikibooks.org/wiki/Python_Programming/Input_and_Output#Standard_File_Objects
