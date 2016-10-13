@@ -17,8 +17,8 @@ options(stringsAsFactors = FALSE) # treat strings as strings not factors [1]
 theme_set(theme_bw()) # set to a white ggplot theme
 
 # set the working directory to directory with this script [5]
-script.dir <- dirname(sys.frame(1)$ofile)
-setwd(script.dir)
+#script.dir <- dirname(sys.frame(1)$ofile)
+#setwd(script.dir)
 
 # Read in the data
 nofilter_tweets_24h <- read.delim("nofilter_tweets_24h.tsv")
