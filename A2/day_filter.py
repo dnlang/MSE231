@@ -15,7 +15,6 @@ Tres Pittman
 """
 
 import sys
-import re
 
 filter_day = "2013-01-01" # Jan 1
 
