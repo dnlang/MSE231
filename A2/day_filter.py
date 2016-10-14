@@ -19,6 +19,9 @@ import sys
 filter_day = "2013-01-01" # Jan 1
 
 for line in sys.stdin:
-    # pull the date out of the line
+    # print the header
+    if "medallion" in line:
+        print(line.strip())
+    # print lines with the correct filter date
     if filter_day in line:
         print(line.strip())
