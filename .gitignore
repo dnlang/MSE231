@@ -2,3 +2,4 @@
 *.gz
 .Rproj.user
 *.csv
+sorted_map
