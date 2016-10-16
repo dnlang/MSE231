@@ -5,7 +5,7 @@ join_map.py
 Purpose: Mapper for data join via map-reduce.
 
 This file is saved as join_mapper.py with execute permission
-(chmod +x join_mapper.py)"""
+(chmod +x join_map.py)"""
 
 import sys
 
