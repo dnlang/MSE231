@@ -3,3 +3,5 @@
 .Rproj.user
 *.csv
 sorted_map
+driver_stat_map_out
+driver_stat_reduce_out
