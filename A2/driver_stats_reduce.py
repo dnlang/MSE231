@@ -65,6 +65,7 @@ def compute_times(time_list):
         if d_time.hour > p_time.hour or d_time.hour < p_time.hour:
             rollover = d_time.minute
             t_occupied += (d_time - p_time).total_seconds() / 60.0 - rollover
+            print("rollover = " +  str(rollover))
         else:
             t_occupied += (d_time - p_time).total_seconds() / 60.0
     return t_occupied, rollover
@@ -73,11 +74,22 @@ def compute_times(time_list):
 def main():
     """Take lines from stdin and print the sum in each group of words."""
     data = read_mapper_output(sys.stdin)
-    t_occupied, n_pass, n_trip, earnings = 0, 0, 0, 0
+    last_hack = ""  # keep track of what driver we are on so we can reset our
+                    # aggregators when we change driver_stats_reduce
+    t_occupied, n_pass, n_trip, earnings = 0, 0, 0, 0 # setup our aggragators
+
     # create groups based on hack,day,hour key
     for key, group in groupby(data, itemgetter(0)):
+
+        # reset the aggregator if we switch drivers
+        if(key.split(",")[0]) != last_hack:
+            t_occupied, n_pass, n_trip, earnings = 0, 0, 0, 0
+            print("reset driver")
+
         # compute the stats for the data in each group
         times = []
+        print("t_occupied = " + str(t_occupied) + ", n_pass = " + str(n_pass) \
+        + ", n_trip = " + str(n_trip) + ", earnings = " + str(earnings))
         for key, ride_data in group:
             ride = ride_data.strip().split(",")
             times.append(ride[PICKUP_TIME_IDX:DROPOFF_TIME_IDV+1])
@@ -85,7 +97,9 @@ def main():
             n_trip += 1
             earnings += float(ride[AMOUNT_IDX])
             print(ride_data)
-        t_occupied, t_occupied_roll = compute_times(times)
+        t_occupied_calc, t_occupied_roll = compute_times(times)
+        t_occupied += t_occupied_calc # add this hour's calc to the initial time
+
         print("t_occupied = " + str(t_occupied) + ", n_pass = " + str(n_pass) \
         + ", n_trip = " + str(n_trip) + ", earnings = " + str(earnings))
         print("\n")
@@ -93,6 +107,8 @@ def main():
         # set the initial values for the next hour to the rollover values
         # calculated from trips that cross the hour border
         t_occupied, n_pass, n_trip, earnings = t_occupied_roll, 0, 0, 0
+        last_hack = key.split(",")[0]   # save our current drive to check for a
+                                        # change in the next loop iteration
 
         #n_pass = sum([int(data[7]) for _, data in group])
         #print(str(n_pass))
