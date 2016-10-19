@@ -41,6 +41,8 @@ DROPOFF_TIME_IDV = 6
 NUM_PASS = 7    # passenger_count index
 AMOUNT_IDX = 20 # total cost for ride
 
+FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
 def read_mapper_output(lines):
     """Returns generator over each line of lines as a list split by tabs."""
@@ -50,20 +52,32 @@ def read_mapper_output(lines):
 
 def compute_times(time_list):
     """Returns the time on duty and the time driving passengers"""
+    t_occupied, rollover = 0, 0
+    for pickup,dropoff in time_list:
+        p_time = datetime.strptime(pickup, FORMAT)
+        d_time = datetime.strptime(dropoff, FORMAT)
 
-    print(time_list)
+        # compute time within the hour, return time and remainder if it rolls
+        # over the hour boundary. The dropoff hour is always bigger than the
+        # pickup hour EXCEPT if the day rolls over! Still, it is the same
+        # calculation since all the time differences are datetime object. The
+        # day rollover will take care of iteself
+        if d_time.hour > p_time.hour or d_time.hour < p_time.hour:
+            rollover = d_time.minute
+            t_occupied += (d_time - p_time).total_seconds() / 60.0 - rollover
+        else:
+            t_occupied += (d_time - p_time).total_seconds() / 60.0
+    return t_occupied, rollover
 
 
 def main():
     """Take lines from stdin and print the sum in each group of words."""
     data = read_mapper_output(sys.stdin)
-
+    t_occupied, n_pass, n_trip, earnings = 0, 0, 0, 0
     # create groups based on hack,day,hour key
     for key, group in groupby(data, itemgetter(0)):
         # compute the stats for the data in each group
         times = []
-        n_pass, n_trip, earnings = 0, 0, 0
-
         for key, ride_data in group:
             ride = ride_data.strip().split(",")
             times.append(ride[PICKUP_TIME_IDX:DROPOFF_TIME_IDV+1])
@@ -71,10 +85,14 @@ def main():
             n_trip += 1
             earnings += float(ride[AMOUNT_IDX])
             print(ride_data)
-        print("n_pass = " + str(n_pass) + ", n_trip = " + str(n_trip) \
-        + ", earnings = " + str(earnings))
-        compute_times(times)
+        t_occupied, t_occupied_roll = compute_times(times)
+        print("t_occupied = " + str(t_occupied) + ", n_pass = " + str(n_pass) \
+        + ", n_trip = " + str(n_trip) + ", earnings = " + str(earnings))
         print("\n")
+
+        # set the initial values for the next hour to the rollover values
+        # calculated from trips that cross the hour border
+        t_occupied, n_pass, n_trip, earnings = t_occupied_roll, 0, 0, 0
 
         #n_pass = sum([int(data[7]) for _, data in group])
         #print(str(n_pass))
