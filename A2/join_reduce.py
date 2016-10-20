@@ -56,25 +56,38 @@ def main():
     for key, group in groupby(data, itemgetter(0)):
         # Figure out which line is the 'trip' and 'fare' data based on the data
         # length. Assign `trip` to LEFT and `fare` to RIGHT
-        data_line1 = next(group)[1].strip().split(",")
-        if len(data_line1) == 14: # trip data
-            left = data_line1
-        elif len(data_line1) == 11:
-            right = data_line1
-        else:
-            pass
+        left = []
+        right = []
+        for key, ride_data in group:
+            ride_data_list = ride_data.strip().split(",")
+            if len(ride_data_list) == 14: # trip data
+                left = ride_data_list
+            elif len(ride_data_list) == 11:
+                right = ride_data_list
+            else:
+                pass
 
-        data_line2 = next(group)[1].strip().split(",")
-        if len(data_line2) == 11:
-            right = data_line2
-        elif len(data_line2) == 14:
-            left = data_line2
-        else:
-            pass
+        # data_line1 = next(group)[1].strip().split(",")
+        # if len(data_line1) == 14: # trip data
+        #     left = data_line1
+        # elif len(data_line1) == 11:
+        #     right = data_line1
+        # else:
+        #     pass
+        #
+        # data_line2 = next(group)[1].strip().split(",")
+        # if len(data_line2) == 11:
+        #     right = data_line2
+        # elif len(data_line2) == 14:
+        #     left = data_line2
+        # else:
+        #     pass
+        #
 
-        # Filter out data with obvious errors, print out clean data
-        if left[0] == "medallion":
-            print("\t".join(left + right[4:])) # print the header
+        # Make sure there are two data lines and get ride of the header
+        if left == [] or right == [] or left[0] == "medallion":
+            pass
+            #print("\t".join(left + right[4:])) # print the header
         elif float(left[TRIP_DIST_IDX]) <= 0 or float(left[PICK_LATT_IDX]) == 0 \
         or float(left[PICK_LONG_IDX]) == 0 or float(left[DROP_LATT_IDX]) == 0 \
         or float(left[DROP_LONG_IDX]) == 0 or float(right[FARE_IDX] == 0) \
