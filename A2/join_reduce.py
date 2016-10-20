@@ -8,7 +8,7 @@ into a single line of data with all unique data values.
 This file is saved as join_reduce.py with execute permission
 (chmod +x join_reduce.py)
 """
-
+from datetime import datetime
 from itertools import groupby
 from operator import itemgetter
 import sys
@@ -30,6 +30,8 @@ surcharge, mta_tax, tip_amount, tolls_amount, total_amount
 # Constants for data filtering. *_IDX indicates index in the data list
 # trip constants
 TRIPTIME      = 60
+PICKUP_TIME_IDX = 5
+DROPOFF_TIME_IDX = 6
 TRIPTIME_IDX  = 8
 TRIP_DIST_IDX = 9
 PICK_LONG_IDX = 10
@@ -41,6 +43,7 @@ DROP_LATT_IDX = 13
 FARE_IDX         = 5
 TOTAL_AMOUNT_IDX = 10
 
+FORMAT = "%Y-%m-%d %H:%M:%S"
 
 def read_mapper_output(lines):
     """Returns generator over each line of lines as a list split by tabs."""
@@ -67,35 +70,30 @@ def main():
             else:
                 pass
 
-        # data_line1 = next(group)[1].strip().split(",")
-        # if len(data_line1) == 14: # trip data
-        #     left = data_line1
-        # elif len(data_line1) == 11:
-        #     right = data_line1
-        # else:
-        #     pass
-        #
-        # data_line2 = next(group)[1].strip().split(",")
-        # if len(data_line2) == 11:
-        #     right = data_line2
-        # elif len(data_line2) == 14:
-        #     left = data_line2
-        # else:
-        #     pass
-        #
 
         # Make sure there are two data lines and get ride of the header
         if left == [] or right == [] or left[0] == "medallion":
             pass
-            #print("\t".join(left + right[4:])) # print the header
-        elif float(left[TRIP_DIST_IDX]) <= 0 or float(left[PICK_LATT_IDX]) == 0 \
-        or float(left[PICK_LONG_IDX]) == 0 or float(left[DROP_LATT_IDX]) == 0 \
-        or float(left[DROP_LONG_IDX]) == 0 or float(right[FARE_IDX] == 0) \
-        or float(right[TOTAL_AMOUNT_IDX]) == 0:
-            #print("pass")
+        # filter out obvious errors: trips too short or long, bad GPS data,
+        # no fare, trips over 2 hours (7200 sec). Similar filters as [1]
+        elif float(left[TRIP_DIST_IDX]) <= 0.001 \
+        or float(left[TRIP_DIST_IDX]) >= 50 \
+        or float(left[PICK_LATT_IDX]) == 0 \
+        or float(left[PICK_LONG_IDX]) == 0 \
+        or float(left[DROP_LATT_IDX]) == 0 \
+        or float(left[DROP_LONG_IDX]) == 0 \
+        or float(right[FARE_IDX] == 0) \
+        or float(right[TOTAL_AMOUNT_IDX]) == 0 \
+        or (datetime.strptime(left[DROPOFF_TIME_IDX], FORMAT) \
+        - datetime.strptime(left[PICKUP_TIME_IDX], FORMAT)).total_seconds()
+        >= 7200:
             pass
+
         else:
             print("\t".join(left + right[4:]))
 
 if __name__ == "__main__":
     main()
+
+# REFERENCES
+# [1] https://github.com/Lab-Work/gpsresilience/blob/7c5183092013d44ce6d295469880502407c0e4ac/trip.py
