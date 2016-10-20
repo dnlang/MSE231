@@ -65,6 +65,8 @@ def main():
             ride_data_list = ride_data.strip().split(",")
             if len(ride_data_list) == 14: # trip data
                 left = ride_data_list
+                dropoff_time = datetime.strptime(left[DROPOFF_TIME_IDX], FORMAT)
+                pickup_time = datetime.strptime(left[PICKUP_TIME_IDX], FORMAT)
             elif len(ride_data_list) == 11:
                 right = ride_data_list
             else:
@@ -74,8 +76,10 @@ def main():
         # Make sure there are two data lines and get ride of the header
         if left == [] or right == [] or left[0] == "medallion":
             pass
+
         # filter out obvious errors: trips too short or long, bad GPS data,
-        # no fare, trips over 2 hours (7200 sec). Similar filters as [1]
+        # no fare, trips over 2 hours (7200 sec) or under 10 seconds
+        # Similar filters as [1]
         elif float(left[TRIP_DIST_IDX]) <= 0.001 \
         or float(left[TRIP_DIST_IDX]) >= 50 \
         or float(left[PICK_LATT_IDX]) == 0 \
@@ -84,9 +88,8 @@ def main():
         or float(left[DROP_LONG_IDX]) == 0 \
         or float(right[FARE_IDX] == 0) \
         or float(right[TOTAL_AMOUNT_IDX]) == 0 \
-        or (datetime.strptime(left[DROPOFF_TIME_IDX], FORMAT) \
-        - datetime.strptime(left[PICKUP_TIME_IDX], FORMAT)).total_seconds()
-        >= 7200:
+        or (dropoff_time - pickup_time).total_seconds() >= 7200 \
+        or (dropoff_time - pickup_time).total_seconds() < 10:
             pass
 
         else:

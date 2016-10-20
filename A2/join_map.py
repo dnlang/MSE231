@@ -22,7 +22,11 @@ def main():
         elif len(line_data) == 11: # fare data
             key = ",".join([line_data[0],line_data[1],line_data[3]])
 
-        print(key + "\t" + line.strip())
+        # get rid of the header, then map the data
+        if "medallion" in key:
+            pass
+        else:
+            print(key + "\t" + line.strip())
 
 if __name__ == "__main__":
     main()
