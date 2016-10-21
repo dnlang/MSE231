@@ -7,3 +7,4 @@ driver_stat_map_out
 driver_stat_reduce_out
 driver_stats_map
 driver_stats_map_out
+quantity_map_out
