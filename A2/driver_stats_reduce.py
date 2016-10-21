@@ -36,10 +36,13 @@ from datetime import datetime
 import sys
 
 # CONSTANTS
-PICKUP_TIME_IDX = 5
-DROPOFF_TIME_IDV = 6
-NUM_PASS = 7    # passenger_count index
-AMOUNT_IDX = 20 # total cost for ride
+PICKUP_TIME_IDX = 0
+DROPOFF_TIME_IDV = 1
+NUM_PASS = 2        # passenger_count index
+DIST_IDX = 3
+AMOUNT_IDX = 4      # total cost for ride
+RIDE_START_IDX = 5  # ride started in the hour
+
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -74,17 +77,17 @@ def compute_times(time_list):
 def main():
     """Take lines from stdin and print the sum in each group of words."""
     data = read_mapper_output(sys.stdin)
-    last_hack = ""  # keep track of what driver we are on so we can reset our
+    #last_hack = ""  # keep track of what driver we are on so we can reset our
                     # aggregators when we change driver_stats_reduce
     t_occupied, n_pass, n_trip, earnings = 0, 0, 0, 0 # setup our aggragators
 
     # create groups based on hack,day,hour key
     for key, group in groupby(data, itemgetter(0)):
 
-        # reset the aggregator if we switch drivers
-        if(key.split(",")[0]) != last_hack:
-            t_occupied, n_pass, n_trip, earnings = 0, 0, 0, 0
-            print("reset driver")
+        # # reset the aggregator if we switch drivers
+        # if(key.split(",")[0]) != last_hack:
+        #     t_occupied, n_pass, n_trip, earnings = 0, 0, 0, 0
+        #     print("reset driver")
 
         # compute the stats for the data in each group
         times = []
@@ -93,8 +96,8 @@ def main():
         for key, ride_data in group:
             ride = ride_data.strip().split(",")
             times.append(ride[PICKUP_TIME_IDX:DROPOFF_TIME_IDV+1])
-            n_pass += int(ride[7])
-            n_trip += 1
+            n_pass += int(ride[NUM_PASS])
+            n_trip += int(ride[RIDE_START_IDX])
             earnings += float(ride[AMOUNT_IDX])
             print(ride_data)
         t_occupied_calc, t_occupied_roll = compute_times(times)
