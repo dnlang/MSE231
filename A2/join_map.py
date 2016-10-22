@@ -23,10 +23,11 @@ def main():
             key = ",".join([line_data[0],line_data[1],line_data[3]])
 
         # get rid of the header, then map the data
-        if "medallion" in key:
-            pass
-        else:
+        # if the first character is not an interger, get rid of the data
+        if key[0].isdigit():
             print(key + "\t" + line.strip())
+        else:
+            pass
 
 if __name__ == "__main__":
     main()

@@ -65,8 +65,12 @@ def main():
             ride_data_list = ride_data.strip().split(",")
             if len(ride_data_list) == 14: # trip data
                 left = ride_data_list
-                dropoff_time = datetime.strptime(left[DROPOFF_TIME_IDX], FORMAT)
-                pickup_time = datetime.strptime(left[PICKUP_TIME_IDX], FORMAT)
+                # if we can't create a good datetime object, get rid of the data
+                try:
+                    dropoff_time = datetime.strptime(left[DROPOFF_TIME_IDX], FORMAT)
+                    pickup_time = datetime.strptime(left[PICKUP_TIME_IDX], FORMAT)
+                except:
+                    left = []
             elif len(ride_data_list) == 11:
                 right = ride_data_list
             else:
