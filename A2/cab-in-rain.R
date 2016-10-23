@@ -47,3 +47,21 @@ taxi_precip$precip <- ifelse(is.na(taxi_precip$HPCP), 0, taxi_precip$HPCP)
 # create dataframe that looks like:
 # date, hour, precip, drivers_onduty, drivers_occupied, t_onduty, t_occupied, n_pass, n_trip, n_mile, earnings
 taxi_precip <- select(taxi_precip, datetime, precip, drivers_onduty, drivers_occupied, t_onduty, t_occupied, n_pass, n_trip, n_mile, earnings)
+
+# create a boolean for rain or no rain
+taxi_precip$rain <- ifelse(taxi_precip$precip > 0, 1, 0)
+
+####### Boxplot comparing rain to no rain to drivers on duty #######
+p <- ggplot(data=taxi_precip, aes(factor(rain), y=drivers_onduty)) +
+  geom_boxplot()
+print(p)
+
+####### Boxplot comparing rain to no rain to earnings #######
+p <- ggplot(data=taxi_precip, aes(factor(rain), y=earnings)) +
+  geom_boxplot()
+print(p)
+
+####### Boxplot comparing rain to no rain #######
+p <- ggplot(data=taxi_precip, aes(factor(rain), y=t_occupied)) +
+  geom_boxplot()
+print(p)

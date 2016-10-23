@@ -76,28 +76,33 @@ def main():
             else:
                 pass
 
+        # try to filter the data. If there is anything wrong with it here,
+        # just get rid of it
+        try:
+            # Make sure there are two data lines and get ride of the header
+            if left == [] or right == [] or left[0] == "medallion":
+                pass
 
-        # Make sure there are two data lines and get ride of the header
-        if left == [] or right == [] or left[0] == "medallion":
-            pass
+            # filter out obvious errors: trips too short or long, bad GPS data,
+            # no fare, trips over 2 hours (7200 sec) or under 10 seconds
+            # Similar filters as [1]
+            elif float(left[TRIP_DIST_IDX]) <= 0.001 \
+            or float(left[TRIP_DIST_IDX]) >= 50 \
+            or float(left[PICK_LATT_IDX]) == 0 \
+            or float(left[PICK_LONG_IDX]) == 0 \
+            or float(left[DROP_LATT_IDX]) == 0 \
+            or float(left[DROP_LONG_IDX]) == 0 \
+            or float(right[FARE_IDX] == 0) \
+            or float(right[TOTAL_AMOUNT_IDX]) == 0 \
+            or (dropoff_time - pickup_time).total_seconds() >= 7200 \
+            or (dropoff_time - pickup_time).total_seconds() < 10:
+                pass
 
-        # filter out obvious errors: trips too short or long, bad GPS data,
-        # no fare, trips over 2 hours (7200 sec) or under 10 seconds
-        # Similar filters as [1]
-        elif float(left[TRIP_DIST_IDX]) <= 0.001 \
-        or float(left[TRIP_DIST_IDX]) >= 50 \
-        or float(left[PICK_LATT_IDX]) == 0 \
-        or float(left[PICK_LONG_IDX]) == 0 \
-        or float(left[DROP_LATT_IDX]) == 0 \
-        or float(left[DROP_LONG_IDX]) == 0 \
-        or float(right[FARE_IDX] == 0) \
-        or float(right[TOTAL_AMOUNT_IDX]) == 0 \
-        or (dropoff_time - pickup_time).total_seconds() >= 7200 \
-        or (dropoff_time - pickup_time).total_seconds() < 10:
-            pass
-
-        else:
-            print("\t".join(left + right[4:]))
+            else:
+                print("\t".join(left + right[4:]))
+        except:
+            #print("ERRRRRRRRRRRROOOOOOOOOOORRRRRRRRRRRR!")
+            pass # get rid of the data
 
 if __name__ == "__main__":
     main()

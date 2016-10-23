@@ -11,3 +11,7 @@ quantity_map_out
 part-00000
 part-00001
 out
+.RData
+.Rhistory
+join_map_out
+join_out
